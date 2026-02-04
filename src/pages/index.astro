@@ -1,17 +1,67 @@
 ---
-
+import Layout from '../layouts/Layout.astro'
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Nino Carriero">
+  <main>
+    <!-- Hero Section -->
+    <section class="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div class="text-center hero-content">
+        <h1 class="text-7xl font-bold mb-4">Nino Carriero</h1>
+        <p class="text-xl text-gray-400">Engineer · Researcher · Creator</p>
+      </div>
+    </section>
+    
+    <!-- About Section -->
+    <section class="min-h-screen bg-gray-800 text-white flex items-center justify-center">
+      <div class="animate-section opacity-0 translate-y-20">
+        <h2 class="text-5xl font-bold">About</h2>
+      </div>
+    </section>
+    
+    <!-- Projects Section -->
+    <section class="min-h-screen bg-gray-700 text-white flex items-center justify-center">
+      <div class="animate-section opacity-0 translate-y-20">
+        <h2 class="text-5xl font-bold">Projects</h2>
+      </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section class="min-h-screen bg-gray-600 text-white flex items-center justify-center">
+      <div class="animate-section opacity-0 translate-y-20">
+        <h2 class="text-5xl font-bold">Contact</h2>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  
+  gsap.registerPlugin(ScrollTrigger)
+  
+  // Hero animation on load
+  gsap.from('.hero-content', {
+    opacity: 0,
+    y: 50,
+    duration: 1,
+    ease: 'power3.out'
+  })
+  
+  // Scroll-triggered animations
+  gsap.utils.toArray('.animate-section').forEach((section) => {
+    gsap.to(section as Element, {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section as Element,
+        start: 'top 80%',
+        end: 'top 50%',
+        toggleActions: 'play none none reverse'
+      }
+    })
+  })
+</script>
