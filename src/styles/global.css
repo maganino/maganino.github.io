@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 html.lenis, html.lenis body {
@@ -14,4 +15,36 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+/* Dark mode (default) */
+:root {
+  --bg: #0a0f1a;
+  --surface: #111827;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #14b8a6;
+}
+
+/* Light mode - warm sepia */
+.light {
+  --bg: #f5f0e6;
+  --surface: #ebe4d6;
+  --text: #3d3529;
+  --muted: #6b5d4d;
+  --accent-primary: #1e5a8a;
+  --accent-secondary: #2a7d6e;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background-color: var(--accent-primary);
+  color: white;
 }
