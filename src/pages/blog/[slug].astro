@@ -1,0 +1,346 @@
+---
+/**
+ * INDIVIDUAL BLOG POST PAGE
+ * Dynamic route: /blog/[slug]
+ * 
+ * Displays full blog post with:
+ * - Hero image
+ * - Publication date and reading time
+ * - Full markdown content
+ * - Tags
+ * - Related posts suggestions
+ */
+
+import Layout from '../../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog')
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post }
+  }))
+}
+
+const { post } = Astro.props
+const { Content } = await post.render()
+
+// Get all posts for "Related Posts" section
+const allPosts = await getCollection('blog')
+const relatedPosts = allPosts
+  .filter(p => 
+    p.slug !== post.slug && 
+    !p.data.draft &&
+    p.data.tags.some(tag => post.data.tags.includes(tag))
+  )
+  .slice(0, 3)
+
+const drawings = {
+  spiralsColorful: {
+    light: '/images/drawings/inverted/spirals-colorful.png',
+    dark: '/images/drawings/transparent/spirals-colorful.png'
+  }
+}
+
+// Format date
+const formattedDate = new Date(post.data.pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+})
+
+// Reading time estimate
+function getReadingTime(content: string): string {
+  const wordsPerMinute = 200
+  const wordCount = content.split(/\s+/).length
+  const minutes = Math.ceil(wordCount / wordsPerMinute)
+  return `${minutes} min read`
+}
+
+const readingTime = getReadingTime(post.body)
+---
+
+<Layout title={`${post.data.title} | Blog | Mina Mounir`}>
+  <main class="pt-24">
+    
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="py-16 px-6 relative overflow-hidden" style="background-color: var(--bg);">
+      
+      <!-- Background texture -->
+      <img 
+        src={drawings.spiralsColorful.dark}
+        alt="" 
+        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-5 pointer-events-none only-dark"
+        aria-hidden="true"
+      />
+      <img 
+        src={drawings.spiralsColorful.light}
+        alt="" 
+        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-5 pointer-events-none only-light"
+        aria-hidden="true"
+      />
+      
+      <div class="max-w-4xl mx-auto relative z-10">
+        
+        {/* Back Button */}
+        <a 
+          href="/blog" 
+          class="inline-flex items-center gap-2 mb-8 text-sm font-medium transition-all hover:gap-3"
+          style="color: var(--accent-primary);"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Back to Blog
+        </a>
+        
+        {/* Title */}
+        <h1 class="font-chalk text-5xl md:text-7xl font-bold mb-6" style="color: var(--text);">
+          {post.data.title}
+        </h1>
+        
+        {/* Description */}
+        <p class="text-xl mb-6" style="color: var(--muted);">
+          {post.data.description}
+        </p>
+        
+        {/* Metadata */}
+        <div class="flex flex-wrap items-center gap-4 mb-8 text-sm" style="color: var(--muted);">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formattedDate}
+          </time>
+          <span>•</span>
+          <span>{readingTime}</span>
+          {post.data.updatedDate && (
+            <>
+              <span>•</span>
+              <span>Updated {new Date(post.data.updatedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </>
+          )}
+        </div>
+        
+        {/* Tags */}
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-8">
+            {post.data.tags.map((tag) => (
+              <a 
+                href={`/blog?tag=${tag}`}
+                class="px-3 py-1 rounded-full text-sm transition-all hover:scale-105" 
+                style="background-color: var(--surface); color: var(--text);"
+              >
+                {tag}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- ============================================
+         HERO IMAGE
+         ============================================ -->
+    {post.data.heroImage && (
+      <section class="px-6 py-8" style="background-color: var(--surface);">
+        <div class="max-w-5xl mx-auto">
+          <img 
+            src={post.data.heroImage} 
+            alt={post.data.title}
+            class="w-full rounded-2xl shadow-2xl"
+          />
+        </div>
+      </section>
+    )}
+
+    <!-- ============================================
+         BLOG POST CONTENT (Markdown)
+         ============================================ -->
+    <section class="py-16 px-6" style="background-color: var(--bg);">
+      <div class="max-w-3xl mx-auto">
+        <article class="prose prose-lg max-w-none blog-content" style="color: var(--text);">
+          <Content />
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================
+         RELATED POSTS
+         ============================================ -->
+    {relatedPosts.length > 0 && (
+      <section class="py-16 px-6" style="background-color: var(--surface);">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="font-chalk text-4xl font-bold mb-8 text-center" style="color: var(--text);">
+            Related Posts
+          </h2>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+            {relatedPosts.map((relatedPost) => {
+              const relatedDate = new Date(relatedPost.data.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })
+              
+              return (
+                <a 
+                  href={`/blog/${relatedPost.slug}`}
+                  class="block rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
+                  style="background-color: var(--bg);"
+                >
+                  {relatedPost.data.heroImage ? (
+                    <div class="h-40 overflow-hidden">
+                      <img 
+                        src={relatedPost.data.heroImage} 
+                        alt={relatedPost.data.title}
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div class="h-40" style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));"></div>
+                  )}
+                  
+                  <div class="p-4">
+                    <p class="text-xs mb-2" style="color: var(--muted);">
+                      {relatedDate}
+                    </p>
+                    <h3 class="font-bold mb-2" style="color: var(--text);">
+                      {relatedPost.data.title}
+                    </h3>
+                    <p class="text-sm" style="color: var(--muted);">
+                      {relatedPost.data.description}
+                    </p>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ============================================
+         BACK TO BLOG
+         ============================================ -->
+    <section class="py-8 px-6 text-center" style="background-color: var(--bg);">
+      <a 
+        href="/blog"
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-full font-medium text-lg transition-all hover:scale-105"
+        style="background-color: var(--accent-primary); color: white;"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        View All Posts
+      </a>
+    </section>
+    
+  </main>
+</Layout>
+
+<!-- ============================================
+     CONTENT STYLING
+     ============================================ -->
+<style>
+  /* Style the markdown content */
+  .blog-content :global(h2) {
+    font-family: 'Caveat', cursive;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  
+  .blog-content :global(h3) {
+    font-family: 'Caveat', cursive;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent-primary);
+  }
+  
+  .blog-content :global(h4) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  
+  .blog-content :global(p) {
+    margin-bottom: 1.25rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  
+  .blog-content :global(ul),
+  .blog-content :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+  
+  .blog-content :global(li) {
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  
+  .blog-content :global(blockquote) {
+    border-left: 4px solid var(--accent-primary);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--muted);
+  }
+  
+  .blog-content :global(code) {
+    background-color: var(--surface);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+    color: var(--accent-secondary);
+  }
+  
+  .blog-content :global(pre) {
+    background-color: var(--surface);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 2rem 0;
+  }
+  
+  .blog-content :global(pre code) {
+    background-color: transparent;
+    padding: 0;
+    color: var(--text);
+  }
+  
+  .blog-content :global(strong) {
+    color: var(--accent-primary);
+    font-weight: 600;
+  }
+  
+  .blog-content :global(img) {
+    border-radius: 1rem;
+    margin: 2rem auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+  
+  .blog-content :global(a) {
+    color: var(--accent-primary);
+    text-decoration: underline;
+    transition: opacity 0.2s;
+  }
+  
+  .blog-content :global(a:hover) {
+    opacity: 0.8;
+  }
+  
+  .blog-content :global(hr) {
+    border: none;
+    border-top: 2px solid var(--surface);
+    margin: 3rem 0;
+  }
+</style>

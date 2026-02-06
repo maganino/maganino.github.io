@@ -1,0 +1,271 @@
+---
+/**
+ * PROJECTS PAGE
+ * 
+ * Displays all projects from the content collection
+ * Features:
+ * - Filter by category (product, research, facilitation, volunteering)
+ * - Featured projects highlighted
+ * - Sorted by order field
+ */
+
+import Layout from '../../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+// Get all projects and sort by order
+const allProjects = await getCollection('projects')
+const projects = allProjects
+  .filter(p => !p.data.draft)
+  .sort((a, b) => a.data.order - b.data.order)
+
+// Group by category
+const categories = {
+  product: projects.filter(p => p.data.category === 'product'),
+  research: projects.filter(p => p.data.category === 'research'),
+  facilitation: projects.filter(p => p.data.category === 'facilitation'),
+  volunteering: projects.filter(p => p.data.category === 'volunteering'),
+}
+
+const drawings = {
+  wireframes: {
+    light: '/images/drawings/inverted/wireframes.png',
+    dark: '/images/drawings/transparent/wireframes.png'
+  },
+  pmFrameworkWhat: {
+    light: '/images/drawings/inverted/pm-framework-what.png',
+    dark: '/images/drawings/transparent/pm-framework-what.png'
+  },
+  lighthouse: {
+    light: '/images/drawings/inverted/lighthouse.png',
+    dark: '/images/drawings/transparent/lighthouse.png'
+  },
+  spiralsColorful: {
+    light: '/images/drawings/inverted/spirals-colorful.png',
+    dark: '/images/drawings/transparent/spirals-colorful.png'
+  }
+}
+---
+
+<Layout title="Projects | Mina Mounir">
+  <main class="pt-24">
+    
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="py-16 px-6 relative overflow-hidden" style="background-color: var(--bg);">
+      
+      <!-- Background texture -->
+      <img 
+        src={drawings.spiralsColorful.dark}
+        alt="" 
+        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-10 pointer-events-none only-dark"
+        aria-hidden="true"
+      />
+      <img 
+        src={drawings.spiralsColorful.light}
+        alt="" 
+        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-10 pointer-events-none only-light"
+        aria-hidden="true"
+      />
+      
+      <div class="max-w-6xl mx-auto relative z-10">
+        <h1 class="font-chalk text-6xl md:text-8xl font-bold mb-6" style="color: var(--text);">
+          Projects
+        </h1>
+        <p class="text-xl max-w-2xl" style="color: var(--muted);">
+          A selection of work spanning product strategy, research, visual facilitation, and peace-building.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         FILTER TABS
+         ============================================ -->
+    <section class="py-8 px-6 sticky top-20 z-40" style="background-color: var(--surface);">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-wrap gap-4 justify-center">
+          <button 
+            class="filter-btn active px-6 py-3 rounded-full font-medium transition-all"
+            data-category="all"
+            style="background-color: var(--accent-primary); color: white;"
+          >
+            All Projects
+          </button>
+          <button 
+            class="filter-btn px-6 py-3 rounded-full font-medium transition-all"
+            data-category="product"
+            style="background-color: var(--bg); color: var(--text);"
+          >
+            Product & Strategy
+          </button>
+          <button 
+            class="filter-btn px-6 py-3 rounded-full font-medium transition-all"
+            data-category="research"
+            style="background-color: var(--bg); color: var(--text);"
+          >
+            Research
+          </button>
+          <button 
+            class="filter-btn px-6 py-3 rounded-full font-medium transition-all"
+            data-category="facilitation"
+            style="background-color: var(--bg); color: var(--text);"
+          >
+            Visual Facilitation
+          </button>
+          <button 
+            class="filter-btn px-6 py-3 rounded-full font-medium transition-all"
+            data-category="volunteering"
+            style="background-color: var(--bg); color: var(--text);"
+          >
+            Dialogue & Peace
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         PROJECTS GRID
+         ============================================ -->
+    <section class="py-16 px-6" style="background-color: var(--bg);">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          {projects.map((project) => (
+            <article 
+              class="project-card opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
+              data-category={project.data.category}
+              style="background-color: var(--surface);"
+            >
+              {/* Project Image */}
+              {project.data.image && (
+                <div class="relative h-48 overflow-hidden">
+                  <img 
+                    src={project.data.image} 
+                    alt={project.data.title}
+                    class="w-full h-full object-cover"
+                  />
+                  {project.data.featured && (
+                    <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold" style="background-color: var(--accent-secondary); color: white;">
+                      Featured
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Project Content */}
+              <div class="p-6">
+                {/* Category Badge */}
+                <div class="mb-3">
+                  <span class="px-3 py-1 rounded-full text-xs font-medium" style="background-color: var(--bg); color: var(--accent-primary);">
+                    {project.data.category}
+                  </span>
+                </div>
+                
+                <h3 class="text-xl font-bold mb-2" style="color: var(--text);">
+                  {project.data.title}
+                </h3>
+                
+                <p class="mb-4 text-sm" style="color: var(--muted);">
+                  {project.data.description}
+                </p>
+                
+                {/* Tags */}
+                {project.data.tags && project.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    {project.data.tags.slice(0, 3).map((tag) => (
+                      <span class="text-xs px-2 py-1 rounded" style="background-color: var(--bg); color: var(--muted);">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Read More Link */}
+                <a 
+                  href={`/projects/${project.slug}`}
+                  class="inline-flex items-center gap-2 font-medium text-sm transition-all hover:gap-3"
+                  style="color: var(--accent-primary);"
+                >
+                  View Project
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+        
+        {/* Empty State */}
+        <div id="empty-state" class="hidden text-center py-16">
+          <p class="text-xl" style="color: var(--muted);">No projects found in this category.</p>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+</Layout>
+
+<!-- ============================================
+     FILTERING SCRIPT
+     ============================================ -->
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  
+  gsap.registerPlugin(ScrollTrigger)
+  
+  // Animate project cards on load
+  const cards = gsap.utils.toArray('.project-card')
+  cards.forEach((card, index) => {
+    gsap.to(card as Element, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: index * 0.1,
+      ease: 'power3.out'
+    })
+  })
+  
+  // Filter functionality
+  const filterBtns = document.querySelectorAll('.filter-btn')
+  const projectCards = document.querySelectorAll('.project-card')
+  const emptyState = document.getElementById('empty-state')
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.getAttribute('data-category')
+      
+      // Update active button
+      filterBtns.forEach(b => {
+        const btnEl = b as HTMLElement
+        btnEl.classList.remove('active')
+        btnEl.style.backgroundColor = 'var(--bg)'
+        btnEl.style.color = 'var(--text)'
+      })
+      const activeBtn = btn as HTMLElement
+      activeBtn.classList.add('active')
+      activeBtn.style.backgroundColor = 'var(--accent-primary)'
+      activeBtn.style.color = 'white'
+      
+      // Filter projects
+      let visibleCount = 0
+      projectCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category')
+        if (category === 'all' || cardCategory === category) {
+          gsap.to(card, { opacity: 1, y: 0, duration: 0.4, display: 'block' })
+          visibleCount++
+        } else {
+          gsap.to(card, { opacity: 0, y: 20, duration: 0.4, display: 'none' })
+        }
+      })
+      
+      // Show/hide empty state
+      if (visibleCount === 0 && emptyState) {
+        emptyState.classList.remove('hidden')
+      } else if (emptyState) {
+        emptyState.classList.add('hidden')
+      }
+    })
+  })
+</script>

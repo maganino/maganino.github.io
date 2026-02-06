@@ -1,6 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ============================================
+   LENIS SMOOTH SCROLL
+   ============================================ */
 html.lenis, html.lenis body {
   height: auto;
 }
@@ -17,7 +20,9 @@ html.lenis, html.lenis body {
   overflow: hidden;
 }
 
-/* Dark mode (default) */
+/* ============================================
+   COLOR SCHEME - Dark Mode (default)
+   ============================================ */
 :root {
   --bg: #0a0f1a;
   --surface: #111827;
@@ -27,7 +32,9 @@ html.lenis, html.lenis body {
   --accent-secondary: #14b8a6;
 }
 
-/* Light mode - warm sepia */
+/* ============================================
+   COLOR SCHEME - Light Mode (sepia)
+   ============================================ */
 .light {
   --bg: #f5f0e6;
   --surface: #ebe4d6;
@@ -37,6 +44,9 @@ html.lenis, html.lenis body {
   --accent-secondary: #2a7d6e;
 }
 
+/* ============================================
+   BASE STYLES
+   ============================================ */
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--bg);
@@ -44,7 +54,151 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Handwritten/Chalk font for headings */
+.font-chalk {
+  font-family: 'Caveat', cursive;
+}
+
 ::selection {
   background-color: var(--accent-primary);
   color: white;
+}
+
+/* ============================================
+   THEME TOGGLE SWITCH
+   ============================================ */
+.theme-switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: var(--surface);
+  border: 2px solid var(--muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-switch::before {
+  content: '🌙';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.light .theme-switch::before {
+  content: '☀️';
+  left: calc(100% - 26px);
+  background-color: var(--accent-secondary);
+}
+
+/* ============================================
+   SCROLL INDICATOR ANIMATION
+   ============================================ */
+.scroll-indicator {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ============================================
+   NAVIGATION - Scroll Sync
+   ============================================ */
+.nav-scrolled {
+  background-color: var(--bg) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-primary);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* ============================================
+   BACKGROUND TEXTURES
+   ============================================ */
+.bg-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0.08;
+}
+
+.bg-texture-right {
+  object-position: right;
+}
+
+.bg-texture-left {
+  object-position: left;
+}
+
+/* ============================================
+   TRANSPARENT DRAWINGS (processed)
+   These blend with any background
+   ============================================ */
+.drawing {
+  mix-blend-mode: screen;
+}
+
+.light .drawing {
+  mix-blend-mode: multiply;
+  filter: invert(1);
+}
+
+/* ============================================
+   LIGHT / DARK IMAGE HELPERS
+   Use with .light class on <html> (Layout.astro)
+   ============================================ */
+.only-dark {
+  display: block;
+}
+
+.only-light {
+  display: none;
+}
+
+.light .only-dark {
+  display: none;
+}
+
+.light .only-light {
+  display: block;
 }
