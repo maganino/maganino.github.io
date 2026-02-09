@@ -13,21 +13,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      # 1️⃣ Checkout repo WITH LFS
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true           # <-- important! pulls LFS files
 
+      # 2️⃣ Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # 4️⃣ Build site
       - name: Build
         run: npm run build
 
+      # 5️⃣ Upload dist folder to Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
