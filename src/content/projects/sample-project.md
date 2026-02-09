@@ -15,6 +15,7 @@ client: "KU Leuven / Petersime"
 link: "https://example.com"  # Optional external link
 featured: true  # Show on homepage
 order: 1  # Lower = appears first
+draft: true
 ---
 
 ## Overview

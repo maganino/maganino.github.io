@@ -10,7 +10,7 @@ pubDate: 2025-02-05
 # updatedDate: 2025-02-06  # Uncomment if you update the post
 heroImage: "/images/spirals-colorful.png"  # Optional hero image
 tags: ["dialogue", "innovation", "visual-thinking"]
-draft: false  # Set to true to hide from listing
+draft: true  # Set to true to hide from listing
 ---
 
 ## Introduction

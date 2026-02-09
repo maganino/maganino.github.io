@@ -118,16 +118,17 @@ function getReadingTime(content: string): string {
             })
             
             return (
-              <article 
-                class="blog-card opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
+              <a
+                href={`/blog/${post.slug}`}
+                class="blog-card opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl block cursor-pointer"
                 data-tags={post.data.tags.join(',')}
-                style="background-color: var(--surface);"
+                style="background-color: var(--surface); text-decoration: none;"
               >
                 {/* Hero Image */}
                 {post.data.heroImage ? (
                   <div class="relative h-48 overflow-hidden">
-                    <img 
-                      src={post.data.heroImage} 
+                    <img
+                      src={post.data.heroImage}
                       alt={post.data.title}
                       class="w-full h-full object-cover"
                     />
@@ -135,22 +136,22 @@ function getReadingTime(content: string): string {
                 ) : (
                   <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));">
                     <div class="absolute inset-0 flex items-center justify-center">
-                      <img 
+                      <img
                         src={drawings.spiralsColorful.dark}
-                        alt="" 
+                        alt=""
                         class="w-32 h-32 object-contain opacity-30 only-dark"
                         aria-hidden="true"
                       />
-                      <img 
+                      <img
                         src={drawings.spiralsColorful.light}
-                        alt="" 
+                        alt=""
                         class="w-32 h-32 object-contain opacity-30 only-light"
                         aria-hidden="true"
                       />
                     </div>
                   </div>
                 )}
-                
+
                 {/* Post Content */}
                 <div class="p-6">
                   {/* Date and Reading Time */}
@@ -161,15 +162,15 @@ function getReadingTime(content: string): string {
                     <span>•</span>
                     <span>{readingTime}</span>
                   </div>
-                  
+
                   <h3 class="text-xl font-bold mb-2" style="color: var(--text);">
                     {post.data.title}
                   </h3>
-                  
+
                   <p class="mb-4 text-sm" style="color: var(--muted);">
                     {post.data.description}
                   </p>
-                  
+
                   {/* Tags */}
                   {post.data.tags && post.data.tags.length > 0 && (
                     <div class="flex flex-wrap gap-2 mb-4">
@@ -180,20 +181,19 @@ function getReadingTime(content: string): string {
                       ))}
                     </div>
                   )}
-                  
-                  {/* Read More Link */}
-                  <a 
-                    href={`/blog/${post.slug}`}
-                    class="inline-flex items-center gap-2 font-medium text-sm transition-all hover:gap-3"
+
+                  {/* Read More */}
+                  <span
+                    class="inline-flex items-center gap-2 font-medium text-sm"
                     style="color: var(--accent-primary);"
                   >
                     Read More
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
-                  </a>
+                  </span>
                 </div>
-              </article>
+              </a>
             )
           })}
         </div>

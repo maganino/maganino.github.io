@@ -1,18 +1,49 @@
 ---
 /**
  * HOME PAGE
- * 
+ *
  * Sections:
- * 1. Hero - "Hello, my name is..." with photo and chalk-style name
+ * 1. Hero - "Hello, my name is Mina Mounir" with photo
  * 2. i-DIA Framework - The 4 pillars with drawings
- * 3. About - Biosketch with expandable details
- * 4. Work - Projects, Volunteering, Seminars
- * 5. Contact - Send me a message
- * 
- * Background textures used: threads, sun, spirals, mushroom, eu-flag
+ * 3. About - Biosketch with expandable details (spirals-colorful bg)
+ * 4. Work - Product & Strategy, R&D & Innovation (with pubs), Social Engagement
+ * 5. Blog Highlights - Latest blog posts
+ * 6. Contact - Send me a message
+ *
+ * Dividers: waves-colorful (floating) between About→Work, Work→Blog, Blog→Contact
  */
 
 import Layout from '../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+// Get latest blog posts for highlights
+const allPosts = await getCollection('blog')
+const latestPosts = allPosts
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3)
+
+// Get featured publications for highlights
+const allPubs = await getCollection('publications')
+const featuredPubs = allPubs
+  .filter(pub => pub.data.featured)
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 3)
+
+function getReadingTime(content: string): string {
+  const wordsPerMinute = 200
+  const wordCount = content.split(/\s+/).length
+  const minutes = Math.ceil(wordCount / wordsPerMinute)
+  return `${minutes} min read`
+}
+
+const typeLabels: Record<string, string> = {
+  'journal': 'Journal',
+  'conference': 'Conference',
+  'book-chapter': 'Book Chapter',
+  'thesis': 'Thesis',
+  'other': 'Other'
+}
 
 const drawings = {
   threads: {
@@ -70,59 +101,75 @@ const drawings = {
   ioSono: {
     light: '/images/drawings/inverted/io-sono.png',
     dark: '/images/drawings/transparent/io-sono.png'
+  },
+  networkColorful: {
+    light: '/images/drawings/inverted/network-colorful.png',
+    dark: '/images/drawings/transparent/network-colorful.png'
+  },
+  fish: {
+    light: '/images/drawings/inverted/fish.png',
+    dark: '/images/drawings/transparent/fish.png'
+  },
+  paix: {
+    light: '/images/drawings/inverted/paix.png',
+    dark: '/images/drawings/transparent/paix.png'
   }
 }
 ---
 
 <Layout title="Mina Mounir | i-DIA">
   <main>
-    
+
     <!-- ============================================
          SECTION: HERO
-         "Hello, my name is..." style introduction
+         "Hello, my name is Mina Mounir" with photo
          Background: threads texture
          ============================================ -->
     <section id="hero" class="min-h-screen flex items-center justify-center px-6 pt-20 relative overflow-hidden" style="background-color: var(--bg);">
-      
+
       <!-- Background Texture: Threads -->
-      <img 
+      <img
         src={drawings.threads.dark}
-        alt="" 
+        alt=""
         class="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none only-dark"
         aria-hidden="true"
       />
-      <img 
+      <img
         src={drawings.threads.light}
-        alt="" 
+        alt=""
         class="absolute inset-0 w-full h-full object-cover opacity-5 pointer-events-none only-light"
         aria-hidden="true"
       />
-      
+
       <div class="hero-content max-w-4xl relative z-10">
         <div class="grid md:grid-cols-2 gap-12 items-center">
-          
+
           <!-- Left: Text Content -->
           <div class="order-2 md:order-1">
             <p class="text-lg mb-2" style="color: var(--muted);">Hello, my name is</p>
-            
+
             <!-- Name in chalk/handwritten style -->
             <h1 class="font-chalk text-6xl md:text-8xl font-bold mb-4" style="color: var(--text);">
               Mina Mounir
             </h1>
-            
-            <p class="text-xl mb-2" style="color: var(--accent-primary);">
-              PhD · Engineer · Visual Thinker
+
+            <p class="text-xl mb-4" style="color: var(--accent-primary);">
+              Innovation Adventurer · Product Strategist · Science Communicator <span class="font-chalk text-2xl" style="color: var(--accent-secondary);">and +++</span>
             </p>
-            
-            <p class="text-lg mb-6" style="color: var(--muted);">
-              I bridge worlds through <span class="font-chalk text-2xl" style="color: var(--accent-secondary);">dialogue</span> and a bit of <span class="font-chalk text-2xl" style="color: var(--accent-secondary);">drawing</span>
-            </p>
-            
-            <!-- i-DIA tagline -->
-            <div class="mb-8">
+
+            <!-- i-DIA + tagline side by side (two-liner) -->
+            <div class="flex items-center gap-4 mb-8 flex-wrap">
               <span class="font-chalk text-5xl" style="color: var(--accent-primary);">i-DIA</span>
+              <div>
+                <p class="text-lg" style="color: var(--muted);">
+                  I bridge worlds through <span class="font-chalk text-2xl" style="color: var(--accent-secondary);">Dialogue</span> & <span class="font-chalk text-2xl" style="color: var(--accent-secondary);">Art</span>
+                </p>
+                <p class="text-lg" style="color: var(--muted);">
+                  and a bit of <span class="font-chalk text-2xl" style="color: var(--accent-secondary);">Code & AI</span>
+                </p>
+              </div>
             </div>
-            
+
             <!-- CTA Buttons -->
             <div class="flex flex-wrap gap-4">
               <a href="#work" class="px-6 py-3 rounded-full font-medium transition-all hover:scale-105" style="background-color: var(--accent-primary); color: white;">
@@ -133,38 +180,26 @@ const drawings = {
               </a>
             </div>
           </div>
-          
+
           <!-- Right: Photo with decorative frame -->
           <div class="order-1 md:order-2 flex justify-center">
             <div class="relative">
-              <!-- Decorative spiral behind photo -->
-              <img 
-                src={drawings.spiralsColorful.dark}
-                alt="" 
-                class="absolute -inset-8 w-[calc(100%+4rem)] h-[calc(100%+4rem)] object-contain opacity-30 pointer-events-none only-dark"
-                aria-hidden="true"
-              />
-              <img 
-                src={drawings.spiralsColorful.light}
-                alt="" 
-                class="absolute -inset-8 w-[calc(100%+4rem)] h-[calc(100%+4rem)] object-contain opacity-30 pointer-events-none only-light"
-                aria-hidden="true"
-              />
               <!-- Photo -->
-              <img 
-                src="/images/photo.jpg" 
-                alt="Mina Mounir" 
+              <img
+                src="/images/photo.jpg"
+                alt="Mina Mounir"
                 class="relative w-64 h-64 md:w-80 md:h-80 rounded-full object-cover border-4 shadow-2xl"
                 style="border-color: var(--accent-primary);"
               />
             </div>
           </div>
         </div>
-        
-        <!-- Scroll Indicator: Mushroom -->
+
+        <!-- Scroll Indicator: Simple Arrow -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
-          <img src={drawings.mushroom.dark} alt="Scroll down" class="w-16 h-16 object-contain opacity-60 only-dark" />
-          <img src={drawings.mushroom.light} alt="Scroll down" class="w-16 h-16 object-contain opacity-60 only-light" />
+          <svg class="w-8 h-8 opacity-40" style="color: var(--muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+          </svg>
         </div>
       </div>
     </section>
@@ -172,141 +207,171 @@ const drawings = {
     <!-- ============================================
          SECTION: i-DIA FRAMEWORK
          The 4 pillars: Idea, Dialogue, Illuminate, Activate
-         Background: sun texture
+         Background: sun texture (larger)
          ============================================ -->
     <section id="i-dia" class="py-24 px-6 relative overflow-hidden" style="background-color: var(--surface);">
-      
-      <!-- Background Texture: Sun -->
-      <img 
+
+      <!-- Background Texture: Sun (larger) -->
+      <img
         src={drawings.sun.dark}
-        alt="" 
-        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-10 pointer-events-none only-dark"
+        alt=""
+        class="absolute -top-12 -right-12 w-[32rem] h-[32rem] object-contain opacity-10 pointer-events-none only-dark"
         aria-hidden="true"
       />
-      <img 
+      <img
         src={drawings.sun.light}
-        alt="" 
-        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-10 pointer-events-none only-light"
+        alt=""
+        class="absolute -top-12 -right-12 w-[32rem] h-[32rem] object-contain opacity-10 pointer-events-none only-light"
         aria-hidden="true"
       />
-      
+
       <div class="max-w-6xl mx-auto relative z-10">
-        
+
         <!-- Section Title -->
         <div class="text-center mb-16 animate-section opacity-0 translate-y-20">
           <h2 class="font-chalk text-6xl md:text-8xl font-bold mb-4" style="color: var(--text);">i-DIA</h2>
           <p class="text-xl" style="color: var(--muted);">My framework for making sense of complexity</p>
-          <p class="text-lg italic mt-2" style="color: var(--accent-secondary);">
-            "Through dialogue and a bit of drawing (and music)"
+          <p class="text-lg italic mt-2 max-w-md mx-auto" style="color: var(--accent-secondary);">
+            "Dialogue and Harmony between the colourful aspects of life are the catalysts of Happiness."
           </p>
         </div>
-        
+
         <!-- 4 Pillars Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          
+
           <!-- i - Idea -->
           <div class="animate-section opacity-0 translate-y-20 text-center p-6 rounded-2xl transition-all hover:scale-105 hover:-translate-y-2" style="background-color: var(--bg);">
             <img src={drawings.idea.dark} alt="Idea" class="w-32 h-32 mx-auto mb-4 object-contain only-dark" />
             <img src={drawings.idea.light} alt="Idea" class="w-32 h-32 mx-auto mb-4 object-contain only-light" />
             <h3 class="font-chalk text-5xl font-bold mb-2" style="color: var(--accent-primary);">i</h3>
             <p class="text-xl font-medium mb-2" style="color: var(--text);">Idea</p>
-            <p class="text-sm" style="color: var(--muted);">Seeing from different angles, sparking new perspectives</p>
+            <p class="text-sm" style="color: var(--muted);">Low-stress capture and landing of ideas, embracing GTD to clear the mind and let creativity flow</p>
           </div>
-          
+
           <!-- D - Dialogue -->
           <div class="animate-section opacity-0 translate-y-20 text-center p-6 rounded-2xl transition-all hover:scale-105 hover:-translate-y-2" style="background-color: var(--bg);">
             <img src={drawings.dialogue.dark} alt="Dialogue" class="w-32 h-32 mx-auto mb-4 object-contain only-dark" />
             <img src={drawings.dialogue.light} alt="Dialogue" class="w-32 h-32 mx-auto mb-4 object-contain only-light" />
             <h3 class="font-chalk text-5xl font-bold mb-2" style="color: var(--accent-primary);">D</h3>
-            <p class="text-xl font-medium mb-2" style="color: var(--text);">Dialogue</p>
-            <p class="text-sm" style="color: var(--muted);">Connecting through conversation across cultures & disciplines</p>
+            <p class="text-xl font-medium mb-2" style="color: var(--text);">Dialogue & Discovery</p>
+            <p class="text-sm" style="color: var(--muted);">Connecting through conversation across cultures & disciplines, discovering new perspectives together</p>
           </div>
-          
+
           <!-- I - Illuminate -->
           <div class="animate-section opacity-0 translate-y-20 text-center p-6 rounded-2xl transition-all hover:scale-105 hover:-translate-y-2" style="background-color: var(--bg);">
             <img src={drawings.lighthouse.dark} alt="Illuminate" class="w-32 h-32 mx-auto mb-4 object-contain only-dark" />
             <img src={drawings.lighthouse.light} alt="Illuminate" class="w-32 h-32 mx-auto mb-4 object-contain only-light" />
             <h3 class="font-chalk text-5xl font-bold mb-2" style="color: var(--accent-primary);">I</h3>
-            <p class="text-xl font-medium mb-2" style="color: var(--text);">Illuminate</p>
-            <p class="text-sm" style="color: var(--muted);">Making sense visually, guiding through complexity</p>
+            <p class="text-xl font-medium mb-2" style="color: var(--text);">Illuminate & Innovate</p>
+            <p class="text-sm" style="color: var(--muted);">Making sense visually, brainstorming solutions, and prototyping ideas into reality</p>
           </div>
-          
+
           <!-- A - Activate -->
           <div class="animate-section opacity-0 translate-y-20 text-center p-6 rounded-2xl transition-all hover:scale-105 hover:-translate-y-2" style="background-color: var(--bg);">
             <img src={drawings.whoAmI.dark} alt="Activate" class="w-32 h-32 mx-auto mb-4 object-contain only-dark" />
             <img src={drawings.whoAmI.light} alt="Activate" class="w-32 h-32 mx-auto mb-4 object-contain only-light" />
             <h3 class="font-chalk text-5xl font-bold mb-2" style="color: var(--accent-primary);">A</h3>
             <p class="text-xl font-medium mb-2" style="color: var(--text);">Activate</p>
-            <p class="text-sm" style="color: var(--muted);">Empowering teams & youth to create impact</p>
+            <p class="text-sm" style="color: var(--muted);">From idea to action: implementation, development, and follow-through with the tools shaped across countries, disciplines, and applications</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ============================================
-         DIVIDER: Colorful Waves
-         ============================================ -->
-    <div class="w-full h-24 relative overflow-hidden" style="background-color: var(--bg);">
-      <img src={drawings.wavesColorful.dark} alt="" class="w-full h-full object-cover opacity-50 only-dark" aria-hidden="true" />
-      <img src={drawings.wavesColorful.light} alt="" class="w-full h-full object-cover opacity-50 only-light" aria-hidden="true" />
-    </div>
-
-    <!-- ============================================
          SECTION: ABOUT
          Biosketch with expandable "Read More"
-         Background: life-map texture
          ============================================ -->
     <section id="about" class="py-24 px-6 relative overflow-hidden" style="background-color: var(--bg);">
-      
-      <div class="max-w-5xl mx-auto">
+
+      <!-- Background: Spirals Colorful (right side, behind text) -->
+      <img
+        src={drawings.spiralsColorful.dark}
+        alt=""
+        class="absolute right-0 top-1/2 -translate-y-1/2 w-[36rem] h-[36rem] object-contain opacity-8 pointer-events-none only-dark"
+        aria-hidden="true"
+      />
+      <img
+        src={drawings.spiralsColorful.light}
+        alt=""
+        class="absolute right-0 top-1/2 -translate-y-1/2 w-[36rem] h-[36rem] object-contain opacity-8 pointer-events-none only-light"
+        aria-hidden="true"
+      />
+
+      <div class="max-w-5xl mx-auto relative z-10">
         <div class="grid md:grid-cols-2 gap-12 items-start">
-          
+
           <!-- Left: Life Map Drawing -->
           <div class="animate-section opacity-0 translate-y-20">
             <img src={drawings.lifeMap.dark} alt="Life Map" class="w-full rounded-2xl only-dark" />
             <img src={drawings.lifeMap.light} alt="Life Map" class="w-full rounded-2xl only-light" />
           </div>
-          
+
           <!-- Right: Biosketch Text -->
           <div class="animate-section opacity-0 translate-y-20">
             <h2 class="font-chalk text-5xl font-bold mb-6" style="color: var(--text);">About Me</h2>
-            
+
             <!-- Short version (always visible) -->
             <div id="bio-short">
               <p class="text-lg mb-4" style="color: var(--text);">
-                I'm a <strong>bridge builder</strong> — connecting disciplines, cultures, and people through visual thinking and dialogue.
+                I'm a <strong>bridge builder</strong>, connecting disciplines, cultures, and people through visual thinking and dialogue. As a drummer, I've learned that my role isn't to play the loudest, but to keep the rhythm that allows the rest of the band to shine.
               </p>
               <p class="mb-4" style="color: var(--muted);">
-                With a PhD in Engineering Technology and 10+ years across academia, industry, and NGOs, I've led multidisciplinary projects that turn research into real-world impact.
+                From Cairo to Florence to Leuven, my path has been anything but linear, fuelled by an explosion of curiosity and a cockroach resilience that keeps me going. A B.Sc. in Computer Engineering, an MSc in Embedded Systems Design across three countries, and a PhD in Acoustic Event Detection at KU Leuven. Each chapter shaped how I think, create, and connect.
               </p>
               <p class="mb-6" style="color: var(--muted);">
                 I believe that peace and innovation emerge from the same source: genuine dialogue across differences.
               </p>
             </div>
-            
-            <!-- Extended version (hidden by default) -->
-            <div id="bio-extended" class="hidden">
-              <p class="mb-4" style="color: var(--muted);">
-                <!-- BIOSKETCH CONTENT WILL GO HERE -->
-                [Your detailed biosketch will be added here once you share it]
-              </p>
+
+            <!-- Extended version (animated expand/collapse) -->
+            <div id="bio-extended" class="bio-expandable">
+              <div class="bio-expandable-inner">
+                <p class="mb-4" style="color: var(--muted);">
+                  It started with building a motion-controlled Gameboy as a student in Cairo, a project that won first place at IEEE's Egyptian Engineering Day. Then came a transformative year with Youth for a United World in Florence, living and learning alongside young people from every culture and belief. That experience rewired how I see the world.
+                </p>
+                <p class="mb-4" style="color: var(--muted);">
+                  I spent time in industry (embedded software at Valeo for Daimler, data storage at Dell-EMC) before returning to academia. My doctoral research blended signal processing, machine learning, and music, earning a Best Paper Award at EUSIPCO. Then, post-doc life took me into a fascinating new world: using sound and AI to understand animal behaviour and welfare at KU Leuven's M3-BIORES group.
+                </p>
+                <p class="mb-4" style="color: var(--muted);">
+                  Along the way, I led 9 research projects, helped secure over €7M in funding, co-advised 7 PhD students and 12 master students, and taught courses from Digital Design to Machine Listening. I've given plenary talks to hundreds at ITAVI in France, organized symposia, and co-built the IDEAL project bridging human-centered design with One Health.
+                </p>
+                <p class="mb-4" style="color: var(--muted);">
+                  Today, I combine product strategy, research, and social engagement: running Design Thinking workshops, facilitating AI vulgarisation sessions, mentoring youth peace initiatives, and drawing my way through complex ideas. Whether it's a whiteboard or a stage, I'm happiest when making the invisible visible.
+                </p>
+
+                <!-- Request CV Button (inside expanded bio) -->
+                <div class="mt-4">
+                  <a
+                    id="request-cv-btn"
+                    href="#"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all hover:scale-105"
+                    style="background-color: var(--accent-secondary); color: white;"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Request my CV
+                  </a>
+                </div>
+              </div>
             </div>
-            
+
             <!-- Read More Button -->
-            <button 
-              id="bio-toggle" 
+            <button
+              id="bio-toggle"
               class="text-sm font-medium underline mb-6 transition-colors"
               style="color: var(--accent-primary);"
             >
               Read more →
             </button>
-            
+
             <!-- Languages -->
             <div class="flex flex-wrap gap-3">
-              <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇪🇬 Arabic</span>
-              <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇮🇹 Italian</span>
-              <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇫🇷 French</span>
               <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇬🇧 English</span>
+              <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇫🇷 French</span>
+              <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇮🇹 Italian</span>
+              <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇪🇬 Arabic</span>
               <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇧🇪 Dutch</span>
               <span class="px-4 py-2 rounded-full text-sm" style="background-color: var(--surface); color: var(--text);">🇪🇸 Spanish</span>
             </div>
@@ -316,119 +381,310 @@ const drawings = {
     </section>
 
     <!-- ============================================
+         DIVIDER: About → Work (waves-colorful)
+         ============================================ -->
+    <div class="drawing-divider" style="background: linear-gradient(to bottom, var(--bg), var(--surface));">
+      <img src={drawings.wavesColorful.dark} alt="" class="drawing-divider-img divider-float only-dark" aria-hidden="true" />
+      <img src={drawings.wavesColorful.light} alt="" class="drawing-divider-img divider-float only-light" aria-hidden="true" />
+    </div>
+
+    <!-- ============================================
          SECTION: WORK
-         Tabs: Projects, Volunteering, Seminars
-         Background: eu-flag texture
+         Background: eu-flag texture (larger, higher)
          ============================================ -->
     <section id="work" class="py-24 px-6 relative overflow-hidden" style="background-color: var(--surface);">
-      
-      <!-- Background Texture: EU Flag -->
-      <img 
+
+      <!-- Background: EU Flag (large, left-aligned) -->
+      <img
         src={drawings.euFlag.dark}
-        alt="" 
-        class="absolute bottom-0 left-0 w-96 h-64 object-contain opacity-10 pointer-events-none only-dark"
+        alt=""
+        class="absolute left-0 top-1/2 -translate-y-1/2 w-[80rem] h-[56rem] object-contain opacity-10 pointer-events-none only-dark"
         aria-hidden="true"
       />
-      <img 
+      <img
         src={drawings.euFlag.light}
-        alt="" 
-        class="absolute bottom-0 left-0 w-96 h-64 object-contain opacity-10 pointer-events-none only-light"
+        alt=""
+        class="absolute left-0 top-1/2 -translate-y-1/2 w-[80rem] h-[56rem] object-contain opacity-10 pointer-events-none only-light"
         aria-hidden="true"
       />
-      
+
       <div class="max-w-6xl mx-auto relative z-10">
-        <h2 class="font-chalk text-5xl font-bold mb-12 text-center animate-section opacity-0 translate-y-20" style="color: var(--text);">Work</h2>
-        
-        <!-- Work Categories Grid -->
+        <h2 class="font-chalk text-5xl font-bold mb-12 text-center animate-section opacity-0 translate-y-20" style="color: var(--text);">What I <span style="color: var(--accent-secondary);">&hearts;</span> Doing</h2>
+
+        <!-- Work Categories Grid: Product, R&D, Social -->
         <div class="grid md:grid-cols-3 gap-8">
-          
-          <!-- Product & Strategy -->
-          <div class="animate-section opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105" style="background-color: var(--bg);">
+
+          <!-- 1. Product & Strategy -->
+          <a href="/projects" class="animate-section opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 block cursor-pointer" style="background-color: var(--bg); text-decoration: none;">
             <img src={drawings.wireframes.dark} alt="Product & Strategy" class="w-full h-48 object-cover only-dark" />
             <img src={drawings.wireframes.light} alt="Product & Strategy" class="w-full h-48 object-cover only-light" />
             <div class="p-6">
               <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Product & Strategy</h3>
               <p class="mb-4" style="color: var(--muted);">From problem framing to GTM, turning ideas into products that matter.</p>
-              <a href="/projects" class="text-sm font-medium" style="color: var(--accent-primary);">View Projects →</a>
+              <span class="text-sm font-medium" style="color: var(--accent-primary);">Discover Initiatives →</span>
+            </div>
+          </a>
+
+          <!-- 2. Research & Innovation (includes publications) -->
+          <div class="animate-section opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 relative" style="background-color: var(--bg);">
+            <a href="/projects" class="block" style="text-decoration: none;">
+              <img src={drawings.networkColorful.dark} alt="Research & Innovation" class="w-full h-48 object-cover only-dark" />
+              <img src={drawings.networkColorful.light} alt="Research & Innovation" class="w-full h-48 object-cover only-light" />
+              <div class="p-6 pb-3">
+                <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Research & Innovation</h3>
+                <p class="mb-3" style="color: var(--muted);">Audio & AI for animal welfare: VocaChick, OMELETTE, MiteControl, IDEAL. 9 projects, €7M+ funding, 20+ publications.</p>
+                <span class="text-sm font-medium" style="color: var(--accent-primary);">Discover Projects →</span>
+              </div>
+            </a>
+
+            <div class="px-6 pb-6">
+              <!-- Mini publication list -->
+              {featuredPubs.length > 0 && (
+                <div class="mb-3">
+                  <p class="text-xs font-medium mb-2" style="color: var(--accent-secondary);">Recent Publications</p>
+                  <ul class="space-y-1">
+                    {featuredPubs.slice(0, 2).map((pub) => (
+                      <li class="text-xs leading-snug" style="color: var(--muted);">
+                        • {pub.data.title.length > 60 ? pub.data.title.substring(0, 60) + '...' : pub.data.title}
+                        <span style="color: var(--accent-secondary);"> ({pub.data.year})</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <a href="/publications" class="text-sm font-medium relative z-10" style="color: var(--accent-primary);">View Publications →</a>
             </div>
           </div>
-          
-          <!-- Visual Facilitation -->
+
+          <!-- 3. Social Engagement -->
           <div class="animate-section opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105" style="background-color: var(--bg);">
-            <img src={drawings.pmFrameworkWhat.dark} alt="Visual Facilitation" class="w-full h-48 object-cover only-dark" />
-            <img src={drawings.pmFrameworkWhat.light} alt="Visual Facilitation" class="w-full h-48 object-cover only-light" />
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Visual Facilitation</h3>
-              <p class="mb-4" style="color: var(--muted);">Making meetings memorable through live drawing and visual summaries.</p>
-              <a href="/projects#facilitation" class="text-sm font-medium" style="color: var(--accent-primary);">See Examples →</a>
-            </div>
-          </div>
-          
-          <!-- Volunteering & Peace -->
-          <div class="animate-section opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105" style="background-color: var(--bg);">
-            <img src="/images/drawings/paix.png" alt="Volunteering" class="w-full h-48 object-cover" />
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Dialogue & Peace</h3>
-              <p class="mb-4" style="color: var(--muted);">Youth empowerment, Design Thinking for peace, intercultural dialogue.</p>
-              <a href="/projects#volunteering" class="text-sm font-medium" style="color: var(--accent-primary);">Learn More →</a>
+            <a href="/projects#social" class="block" style="text-decoration: none;">
+              <div class="relative h-48 overflow-hidden">
+                <img src={drawings.paix.dark} alt="Social Engagement" class="w-full h-full object-cover only-dark" />
+                <img src={drawings.paix.light} alt="Social Engagement" class="w-full h-full object-cover only-light" />
+              </div>
+              <div class="p-6 pb-3">
+                <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Social Engagement</h3>
+                <p class="mb-3" style="color: var(--muted);">Committed to the SDGs: peace, education, health, and welfare. Design Thinking workshops, AI vulgarisation, visual facilitation, and intercultural dialogue. <span class="font-chalk text-lg" style="color: var(--accent-secondary);">P-AI-X</span> : Peace in the Age of AI.</p>
+                <span class="text-sm font-medium" style="color: var(--accent-primary);">Learn More →</span>
+              </div>
+            </a>
+
+            <!-- Blog highlight -->
+            <div class="px-6 pb-6">
+              <a href="/blog/jaime-ai-medicine-ethics" class="flex items-center gap-3 p-3 rounded-lg transition-all hover:scale-[1.02]" style="background-color: var(--surface); text-decoration: none;">
+                <img src="/images/blog/jaime.jpeg" alt="j'AI ME" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                <div>
+                  <p class="text-xs font-medium" style="color: var(--accent-secondary);">Latest</p>
+                  <p class="text-sm font-medium" style="color: var(--text);">j'AI ME: AI, Medicine & Ethics</p>
+                </div>
+              </a>
             </div>
           </div>
         </div>
-        
+
         <!-- Experience Timeline (Highlights) -->
         <div class="mt-16">
           <h3 class="text-2xl font-bold mb-8 text-center" style="color: var(--text);">Experience Highlights</h3>
+
           <div class="space-y-6">
-            
+
             <div class="animate-section opacity-0 translate-y-20 p-6 rounded-xl" style="background-color: var(--bg);">
               <div class="flex flex-wrap justify-between items-start mb-2">
-                <h4 class="text-lg font-bold" style="color: var(--text);">Product Strategist</h4>
-                <span class="text-sm" style="color: var(--muted);">2025 — Present</span>
+                <h4 class="text-lg font-bold" style="color: var(--text);">Product Strategist & Social Entrepreneur</h4>
+                <span class="text-sm" style="color: var(--muted);">2026 – Present</span>
               </div>
               <p class="font-medium mb-2" style="color: var(--accent-primary);">TipTong · VoxelSensors · D4A</p>
-              <p style="color: var(--muted);">Leading product strategy, Design Thinking workshops, and youth empowerment initiatives.</p>
+              <p style="color: var(--muted);">Product strategy for tech startups, Design Thinking workshops for peace leaders, AI vulgarisation for healthcare professionals.</p>
             </div>
-            
+
             <div class="animate-section opacity-0 translate-y-20 p-6 rounded-xl" style="background-color: var(--bg);">
               <div class="flex flex-wrap justify-between items-start mb-2">
-                <h4 class="text-lg font-bold" style="color: var(--text);">Senior R&D Project & Product Manager</h4>
-                <span class="text-sm" style="color: var(--muted);">2020 — 2024</span>
+                <h4 class="text-lg font-bold" style="color: var(--text);">Postdoctoral Researcher & R&D Project Manager</h4>
+                <span class="text-sm" style="color: var(--muted);">2020 – 2024</span>
               </div>
               <p class="font-medium mb-2" style="color: var(--accent-primary);">KU Leuven, M3-BIORES</p>
-              <p style="color: var(--muted);">Led 9 projects, secured €7M+ funding, launched "Nest Sound" for animal welfare monitoring.</p>
+              <p style="color: var(--muted);">Led 9 EU/Flemish-funded projects (VocaChick, OMELETTE, MiteControl, IDEAL), secured €7M+, co-advised 7 PhD & 12 MSc students, plenary speaker at ITAVI.</p>
             </div>
-            
+
+            <div class="animate-section opacity-0 translate-y-20 p-6 rounded-xl" style="background-color: var(--bg);">
+              <div class="flex flex-wrap justify-between items-start mb-2">
+                <h4 class="text-lg font-bold" style="color: var(--text);">Doctoral Researcher</h4>
+                <span class="text-sm" style="color: var(--muted);">2014 – 2020</span>
+              </div>
+              <p class="font-medium mb-2" style="color: var(--accent-primary);">KU Leuven, ESAT-STADIUS</p>
+              <p style="color: var(--muted);">PhD in Acoustic Event Detection: signal processing, machine learning, and music. Best Paper Award at EUSIPCO 2016. Research visit at Queen Mary University of London.</p>
+            </div>
+
+            <div class="animate-section opacity-0 translate-y-20 p-6 rounded-xl" style="background-color: var(--bg);">
+              <div class="flex flex-wrap justify-between items-start mb-2">
+                <h4 class="text-lg font-bold" style="color: var(--text);">Industry Engineer</h4>
+                <span class="text-sm" style="color: var(--muted);">2009 – 2011</span>
+              </div>
+              <p class="font-medium mb-2" style="color: var(--accent-primary);">Valeo Automotive · Dell-EMC</p>
+              <p style="color: var(--muted);">Embedded software for Daimler ECUs, data storage solutions, and software integration worldwide.</p>
+            </div>
+
           </div>
+
         </div>
       </div>
     </section>
 
     <!-- ============================================
-         DIVIDER: Mushroom (scroll visual)
+         DIVIDER: Work → Blog (waves-colorful)
          ============================================ -->
-    <div class="w-full py-8 flex justify-center" style="background-color: var(--bg);">
-      <img src={drawings.mushroom.dark} alt="" class="w-32 h-32 object-contain opacity-40 only-dark" aria-hidden="true" />
-      <img src={drawings.mushroom.light} alt="" class="w-32 h-32 object-contain opacity-40 only-light" aria-hidden="true" />
+    <div class="drawing-divider" style="background: linear-gradient(to bottom, var(--surface), var(--bg));">
+      <img src={drawings.wavesColorful.dark} alt="" class="drawing-divider-img divider-float only-dark" aria-hidden="true" />
+      <img src={drawings.wavesColorful.light} alt="" class="drawing-divider-img divider-float only-light" aria-hidden="true" />
+    </div>
+
+    <!-- ============================================
+         SECTION: BLOG HIGHLIGHTS
+         Latest blog posts preview
+         ============================================ -->
+    <section id="blog" class="py-24 px-6 relative overflow-hidden" style="background-color: var(--bg);">
+
+      <img
+        src={drawings.lighthouse.dark}
+        alt=""
+        class="absolute top-0 right-0 w-80 h-80 object-contain opacity-8 pointer-events-none only-dark"
+        aria-hidden="true"
+      />
+      <img
+        src={drawings.lighthouse.light}
+        alt=""
+        class="absolute top-0 right-0 w-80 h-80 object-contain opacity-8 pointer-events-none only-light"
+        aria-hidden="true"
+      />
+
+      <div class="max-w-6xl mx-auto relative z-10">
+        <div class="text-center mb-12 animate-section opacity-0 translate-y-20">
+          <h2 class="font-chalk text-5xl font-bold mb-4" style="color: var(--text);">Thinking Out Loud</h2>
+          <p class="text-xl" style="color: var(--muted);">Thoughts on innovation, dialogue, and visual thinking</p>
+        </div>
+
+        {latestPosts.length > 0 ? (
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {latestPosts.map((post) => {
+              const readingTime = getReadingTime(post.body)
+              const formattedDate = new Date(post.data.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })
+
+              return (
+                <a
+                  href={`/blog/${post.slug}`}
+                  class="animate-section opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl block cursor-pointer"
+                  style="background-color: var(--surface); text-decoration: none;"
+                >
+                  {post.data.heroImage ? (
+                    <div class="relative h-48 overflow-hidden">
+                      <img
+                        src={post.data.heroImage}
+                        alt={post.data.title}
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));">
+                      <div class="absolute inset-0 flex items-center justify-center">
+                        <img
+                          src={drawings.spiralsColorful.dark}
+                          alt=""
+                          class="w-32 h-32 object-contain opacity-30 only-dark"
+                          aria-hidden="true"
+                        />
+                        <img
+                          src={drawings.spiralsColorful.light}
+                          alt=""
+                          class="w-32 h-32 object-contain opacity-30 only-light"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div class="p-6">
+                    <div class="flex items-center gap-3 mb-3 text-xs" style="color: var(--muted);">
+                      <time datetime={post.data.pubDate.toISOString()}>
+                        {formattedDate}
+                      </time>
+                      <span>·</span>
+                      <span>{readingTime}</span>
+                    </div>
+
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text);">
+                      {post.data.title}
+                    </h3>
+
+                    <p class="mb-4 text-sm" style="color: var(--muted);">
+                      {post.data.description}
+                    </p>
+
+                    <span
+                      class="inline-flex items-center gap-2 font-medium text-sm"
+                      style="color: var(--accent-primary);"
+                    >
+                      Read More
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                      </svg>
+                    </span>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        ) : (
+          <div class="text-center py-12 animate-section opacity-0 translate-y-20">
+            <p class="text-lg" style="color: var(--muted);">Blog posts coming soon...</p>
+          </div>
+        )}
+
+        <div class="text-center mt-12 animate-section opacity-0 translate-y-20">
+          <a href="/blog" class="px-8 py-4 rounded-full font-medium text-lg transition-all hover:scale-105 inline-block" style="border: 2px solid var(--accent-primary); color: var(--accent-primary);">
+            View All Posts →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         DIVIDER: Blog → Contact (waves-colorful)
+         ============================================ -->
+    <div class="drawing-divider" style="background: linear-gradient(to bottom, var(--bg), var(--bg));">
+      <img src={drawings.wavesColorful.dark} alt="" class="drawing-divider-img divider-float only-dark" aria-hidden="true" />
+      <img src={drawings.wavesColorful.light} alt="" class="drawing-divider-img divider-float only-light" aria-hidden="true" />
     </div>
 
     <!-- ============================================
          SECTION: CONTACT
-         "Send me a message" with form
+         "Send me a message" with mushroom drawing
          ============================================ -->
     <section id="contact" class="py-24 px-6 relative overflow-hidden" style="background-color: var(--bg);">
-      
+
       <div class="max-w-3xl mx-auto">
         <div class="text-center animate-section opacity-0 translate-y-20">
-          
-          <!-- Io Sono drawing -->
-          <img src={drawings.ioSono.dark} alt="Io sono l'anima" class="w-48 h-48 mx-auto mb-8 object-contain only-dark" />
-          <img src={drawings.ioSono.light} alt="Io sono l'anima" class="w-48 h-48 mx-auto mb-8 object-contain only-light" />
-          
+
+          <!-- Mushroom drawing (was io-sono) -->
+          <img src={drawings.mushroom.dark} alt="" class="w-48 h-48 mx-auto mb-8 object-contain only-dark" />
+          <img src={drawings.mushroom.light} alt="" class="w-48 h-48 mx-auto mb-8 object-contain only-light" />
+
           <h2 class="font-chalk text-5xl font-bold mb-4" style="color: var(--text);">Let's Talk</h2>
-          <p class="text-xl mb-8" style="color: var(--muted);">
-            Interested in collaboration, facilitation, or just a dialogue about innovation, peace, or music?
+          <p class="text-xl mb-4" style="color: var(--muted);">
+            Let's skip the usual "present yourself" and "where do you see yourself in 5 years."
           </p>
-          
+          <p class="text-lg mb-4 italic" style="color: var(--accent-secondary);">
+            What does the world need most today? What can we build together to make it better? How do we match to bring the magic?
+          </p>
+          <p class="text-base mb-8" style="color: var(--muted);">
+            I'm always happy to chat about <span style="color: var(--accent-primary);">AI</span>, <span style="color: var(--accent-primary);">cooking</span>, <span style="color: var(--accent-primary);">music</span>, <span style="color: var(--accent-primary);">animal welfare</span>, <span style="color: var(--accent-primary);">peace initiatives</span>, <span style="color: var(--accent-primary);">product development</span>, <span style="color: var(--accent-primary);">startup strategy</span>, or <span style="color: var(--accent-primary);">technical support</span>. Pick your favourite!
+          </p>
+
           <!-- Contact Buttons -->
           <div class="flex flex-wrap justify-center gap-4 mb-12">
             <a href="mailto:mina.mas@hotmail.com" class="px-8 py-4 rounded-full font-medium text-lg transition-all hover:scale-105" style="background-color: var(--accent-primary); color: white;">
@@ -438,7 +694,7 @@ const drawings = {
               Connect on LinkedIn
             </a>
           </div>
-          
+
           <p style="color: var(--muted);">
             📍 Mont-Saint-Guibert, Belgium · 📞 +32 478 26 29 55
           </p>
@@ -450,23 +706,23 @@ const drawings = {
          FOOTER
          ============================================ -->
     <footer class="py-8 px-6 text-center" style="background-color: var(--surface);">
-      <p style="color: var(--muted);">© 2025 Mina Mounir · Built with dialogue and a bit of code</p>
+      <p style="color: var(--muted);">© 2026 Mina Mounir · Built with dialogue and a bit of code</p>
     </footer>
-    
+
   </main>
 </Layout>
 
 <!-- ============================================
      PAGE SCRIPTS
      - GSAP animations with different effects per section
-     - Bio toggle functionality
+     - Bio toggle functionality with smooth animation
      ============================================ -->
 <script>
   import { gsap } from 'gsap'
   import { ScrollTrigger } from 'gsap/ScrollTrigger'
-  
+
   gsap.registerPlugin(ScrollTrigger)
-  
+
   // ============================================
   // HERO ANIMATION (fade in + slide up)
   // ============================================
@@ -476,35 +732,31 @@ const drawings = {
     duration: 1.2,
     ease: 'power3.out'
   })
-  
+
   // ============================================
   // SCROLL-TRIGGERED ANIMATIONS
   // Different effects for variety
   // ============================================
   const sections = gsap.utils.toArray('.animate-section')
-  
+
   sections.forEach((section, index) => {
-    // Alternate between different animation styles
     const animationType = index % 3
-    
+
     let animationProps = {
       opacity: 1,
       y: 0,
       duration: 0.8,
       ease: 'power3.out'
     }
-    
-    // Add variety based on index
+
     if (animationType === 1) {
-      // Slide from left
       gsap.set(section as Element, { x: -30 })
       animationProps = { ...animationProps, x: 0 } as any
     } else if (animationType === 2) {
-      // Slide from right
       gsap.set(section as Element, { x: 30 })
       animationProps = { ...animationProps, x: 0 } as any
     }
-    
+
     gsap.to(section as Element, {
       ...animationProps,
       scrollTrigger: {
@@ -515,24 +767,36 @@ const drawings = {
       }
     })
   })
-  
+
   // ============================================
-  // BIO TOGGLE (Read More / Read Less)
+  // BIO TOGGLE (Read More / Read Less) with smooth animation
   // ============================================
   const bioToggle = document.getElementById('bio-toggle')
-  const bioShort = document.getElementById('bio-short')
   const bioExtended = document.getElementById('bio-extended')
   let bioExpanded = false
-  
+
   bioToggle?.addEventListener('click', () => {
     bioExpanded = !bioExpanded
-    
+
     if (bioExpanded) {
-      bioExtended?.classList.remove('hidden')
+      bioExtended?.classList.add('expanded')
       bioToggle.textContent = '← Read less'
     } else {
-      bioExtended?.classList.add('hidden')
+      bioExtended?.classList.remove('expanded')
       bioToggle.textContent = 'Read more →'
     }
+  })
+
+  // ============================================
+  // REQUEST CV BUTTON (single dialog → mailto)
+  // ============================================
+  const cvBtn = document.getElementById('request-cv-btn')
+  cvBtn?.addEventListener('click', (e) => {
+    e.preventDefault()
+    const input = prompt('Please enter your name, email, and a short message (e.g. "Jane Doe, jane@company.com, Loved your talk at ECPLF!"):')
+    if (!input) return
+    const subject = encodeURIComponent('CV Request')
+    const body = encodeURIComponent(`Hi Mina,\n\n${input}\n\nI would love to receive a copy of your CV.\n\nBest regards`)
+    window.location.href = `mailto:mina.mas@hotmail.com?subject=${subject}&body=${body}`
   })
 </script>

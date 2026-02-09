@@ -1,0 +1,303 @@
+---
+/**
+ * PUBLICATIONS PAGE
+ *
+ * Displays all publications from the content collection
+ * Features:
+ * - Type filtering (journal, conference, book-chapter, thesis, other)
+ * - Year grouping
+ * - DOI links and PDF downloads
+ * - Featured badge
+ */
+
+import Layout from '../../layouts/Layout.astro'
+import { getCollection } from 'astro:content'
+
+// Get all publications, sort by year (newest first)
+const allPubs = await getCollection('publications')
+const publications = allPubs.sort((a, b) => b.data.year - a.data.year)
+
+// Extract unique types and years for filtering, with 'other' last
+const typeOrder = ['journal', 'conference', 'book-chapter', 'thesis', 'other']
+const allTypes = [...new Set(publications.map(p => p.data.type))].sort((a, b) => typeOrder.indexOf(a) - typeOrder.indexOf(b))
+const allYears = [...new Set(publications.map(p => p.data.year))].sort((a, b) => b - a)
+
+// Type display names
+const typeLabels: Record<string, string> = {
+  'journal': 'Journal',
+  'conference': 'Conference',
+  'book-chapter': 'Book Chapter',
+  'thesis': 'Thesis',
+  'other': 'Other'
+}
+
+const drawings = {
+  lighthouse: {
+    light: '/images/drawings/inverted/lighthouse.png',
+    dark: '/images/drawings/transparent/lighthouse.png'
+  }
+}
+---
+
+<Layout title="Publications | Mina Mounir">
+  <main class="pt-24">
+
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="py-16 px-6 relative overflow-hidden" style="background-color: var(--bg);">
+
+      <img
+        src={drawings.lighthouse.dark}
+        alt=""
+        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-10 pointer-events-none only-dark"
+        aria-hidden="true"
+      />
+      <img
+        src={drawings.lighthouse.light}
+        alt=""
+        class="absolute top-0 right-0 w-96 h-96 object-contain opacity-10 pointer-events-none only-light"
+        aria-hidden="true"
+      />
+
+      <div class="max-w-6xl mx-auto relative z-10">
+        <h1 class="font-chalk text-6xl md:text-8xl font-bold" style="color: var(--text);">
+          Publications
+        </h1>
+      </div>
+    </section>
+
+    <!-- ============================================
+         TYPE FILTERS
+         ============================================ -->
+    {allTypes.length > 0 && (
+      <section class="pub-filters py-2.5 px-6 sticky top-[56px] z-40" style="background-color: var(--surface); border-bottom: 1px solid rgba(148,163,184,0.1);">
+        <div class="max-w-6xl mx-auto">
+          <div class="flex flex-wrap gap-2 justify-center">
+            <button
+              class="type-filter active px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+              data-type="all"
+              style="background-color: var(--accent-primary); color: white;"
+            >
+              All
+            </button>
+            {allTypes.map((type) => (
+              <button
+                class="type-filter px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                data-type={type}
+                style="background-color: var(--bg); color: var(--text);"
+              >
+                {typeLabels[type] || type}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ============================================
+         PUBLICATIONS LIST
+         ============================================ -->
+    <section class="py-16 px-6" style="background-color: var(--bg);">
+      <div class="max-w-4xl mx-auto">
+
+        {allYears.map((year) => {
+          const yearPubs = publications.filter(p => p.data.year === year)
+          return (
+            <div class="year-group mb-12" data-year={year}>
+              <h2 class="font-chalk text-3xl font-bold mb-6 sticky top-[96px] z-30 py-2" style="color: var(--accent-primary); background-color: var(--bg);">
+                {year}
+              </h2>
+
+              <div class="space-y-6">
+                {yearPubs.map((pub) => (
+                  <article
+                    class="pub-card opacity-0 translate-y-10 p-6 rounded-xl transition-all hover:scale-[1.02]"
+                    data-type={pub.data.type}
+                    style="background-color: var(--surface);"
+                  >
+                    <div class="flex flex-wrap items-start gap-3 mb-2">
+                      {/* Type badge */}
+                      <span class="text-xs px-3 py-1 rounded-full font-medium" style="background-color: var(--accent-primary); color: white;">
+                        {typeLabels[pub.data.type] || pub.data.type}
+                      </span>
+
+                      {/* Featured badge */}
+                      {pub.data.featured && (
+                        <span class="text-xs px-3 py-1 rounded-full font-medium" style="background-color: var(--accent-secondary); color: white;">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h3 class="text-lg font-bold mb-2" style="color: var(--text);">
+                      {pub.data.title}
+                    </h3>
+
+                    {/* Authors */}
+                    <p class="text-sm mb-1" style="color: var(--muted);">
+                      {pub.data.authors.join(', ')}
+                    </p>
+
+                    {/* Venue */}
+                    <p class="text-sm italic mb-3" style="color: var(--accent-secondary);">
+                      {pub.data.venue}
+                    </p>
+
+                    {/* Abstract (collapsible) */}
+                    {pub.data.abstract && (
+                      <div class="mb-3">
+                        <button
+                          class="abstract-toggle text-xs font-medium underline transition-colors"
+                          style="color: var(--accent-primary);"
+                        >
+                          Show Abstract
+                        </button>
+                        <p class="abstract-text hidden mt-2 text-sm leading-relaxed" style="color: var(--muted);">
+                          {pub.data.abstract}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Tags */}
+                    {pub.data.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-2 mb-3">
+                        {pub.data.tags.map((tag) => (
+                          <span class="text-xs px-2 py-1 rounded" style="background-color: var(--bg); color: var(--muted);">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Links */}
+                    <div class="flex flex-wrap gap-3">
+                      {pub.data.doi && (
+                        <a
+                          href={`https://doi.org/${pub.data.doi}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center gap-1 text-sm font-medium transition-all hover:gap-2"
+                          style="color: var(--accent-primary);"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                          </svg>
+                          DOI
+                        </a>
+                      )}
+                      {pub.data.pdf && (
+                        <a
+                          href={pub.data.pdf}
+                          target="_blank"
+                          class="inline-flex items-center gap-1 text-sm font-medium transition-all hover:gap-2"
+                          style="color: var(--accent-secondary);"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                          </svg>
+                          PDF
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+
+        {/* Empty State */}
+        <div id="empty-state" class="hidden text-center py-16">
+          <p class="text-xl" style="color: var(--muted);">No publications found for this type.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<!-- ============================================
+     FILTERING & ANIMATION SCRIPT
+     ============================================ -->
+<script>
+  import { gsap } from 'gsap'
+
+  // Animate publication cards on load
+  const cards = gsap.utils.toArray('.pub-card')
+  cards.forEach((card, index) => {
+    gsap.to(card as Element, {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      delay: index * 0.08,
+      ease: 'power3.out'
+    })
+  })
+
+  // Type filtering
+  const typeFilters = document.querySelectorAll('.type-filter')
+  const pubCards = document.querySelectorAll('.pub-card')
+  const yearGroups = document.querySelectorAll('.year-group')
+  const emptyState = document.getElementById('empty-state')
+
+  typeFilters.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const selectedType = btn.getAttribute('data-type')
+
+      // Update active button
+      typeFilters.forEach(b => {
+        const btnEl = b as HTMLElement
+        btnEl.classList.remove('active')
+        btnEl.style.backgroundColor = 'var(--bg)'
+        btnEl.style.color = 'var(--text)'
+      })
+      const activeBtn = btn as HTMLElement
+      activeBtn.classList.add('active')
+      activeBtn.style.backgroundColor = 'var(--accent-primary)'
+      activeBtn.style.color = 'white'
+
+      // Filter publications
+      let visibleCount = 0
+      pubCards.forEach(card => {
+        const cardType = card.getAttribute('data-type')
+        if (selectedType === 'all' || cardType === selectedType) {
+          gsap.to(card, { opacity: 1, y: 0, duration: 0.4, display: 'block' })
+          visibleCount++
+        } else {
+          gsap.to(card, { opacity: 0, y: 10, duration: 0.3, display: 'none' })
+        }
+      })
+
+      // Show/hide year groups that have no visible cards
+      yearGroups.forEach(group => {
+        const groupCards = group.querySelectorAll('.pub-card')
+        const hasVisible = Array.from(groupCards).some(card => {
+          const cardType = card.getAttribute('data-type')
+          return selectedType === 'all' || cardType === selectedType
+        })
+        ;(group as HTMLElement).style.display = hasVisible ? 'block' : 'none'
+      })
+
+      // Show/hide empty state
+      if (visibleCount === 0 && emptyState) {
+        emptyState.classList.remove('hidden')
+      } else if (emptyState) {
+        emptyState.classList.add('hidden')
+      }
+    })
+  })
+
+  // Abstract toggle
+  document.querySelectorAll('.abstract-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const abstractText = btn.nextElementSibling as HTMLElement
+      if (abstractText) {
+        const isHidden = abstractText.classList.contains('hidden')
+        abstractText.classList.toggle('hidden')
+        btn.textContent = isHidden ? 'Hide Abstract' : 'Show Abstract'
+      }
+    })
+  })
+</script>
