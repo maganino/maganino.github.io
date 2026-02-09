@@ -48,5 +48,3 @@ The project bridges signal processing, machine learning, and animal welfare scie
 ![Hatchery Monitoring](/images/projects/vocachick/vocachick-3.png)
 
 ![Data Pipeline](/images/projects/vocachick/vocachick-4.png)
-
-![Results Dashboard](/images/projects/vocachick/vocachick-5.png)

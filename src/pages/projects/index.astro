@@ -131,16 +131,17 @@ const drawings = {
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           
           {projects.map((project) => (
-            <article 
-              class="project-card opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
+            <a
+              href={`/projects/${project.slug}`}
+              class="project-card opacity-0 translate-y-20 rounded-2xl overflow-hidden transition-all hover:scale-105 hover:shadow-2xl block cursor-pointer"
               data-category={project.data.category}
-              style="background-color: var(--surface);"
+              style="background-color: var(--surface); text-decoration: none;"
             >
               {/* Project Image */}
               {project.data.image && (
                 <div class="relative h-48 overflow-hidden">
-                  <img 
-                    src={project.data.image} 
+                  <img
+                    src={project.data.image}
                     alt={project.data.title}
                     class="w-full h-full object-cover"
                   />
@@ -151,7 +152,7 @@ const drawings = {
                   )}
                 </div>
               )}
-              
+
               {/* Project Content */}
               <div class="p-6">
                 {/* Category Badge */}
@@ -160,15 +161,15 @@ const drawings = {
                     {project.data.category}
                   </span>
                 </div>
-                
+
                 <h3 class="text-xl font-bold mb-2" style="color: var(--text);">
                   {project.data.title}
                 </h3>
-                
+
                 <p class="mb-4 text-sm" style="color: var(--muted);">
                   {project.data.description}
                 </p>
-                
+
                 {/* Tags */}
                 {project.data.tags && project.data.tags.length > 0 && (
                   <div class="flex flex-wrap gap-2 mb-4">
@@ -179,20 +180,19 @@ const drawings = {
                     ))}
                   </div>
                 )}
-                
-                {/* Read More Link */}
-                <a 
-                  href={`/projects/${project.slug}`}
-                  class="inline-flex items-center gap-2 font-medium text-sm transition-all hover:gap-3"
+
+                {/* View Project */}
+                <span
+                  class="inline-flex items-center gap-2 font-medium text-sm"
                   style="color: var(--accent-primary);"
                 >
                   View Project
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
-                </a>
+                </span>
               </div>
-            </article>
+            </a>
           ))}
         </div>
         

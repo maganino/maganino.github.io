@@ -33,4 +33,4 @@ Whether you're a doctor, a nurse, an ethics board member, or simply curious abou
 
 ---
 
-*If you'd like me to give a similar talk for your team, institution, or community, feel free to [reach out](/contact).*
+*If you'd like me to give a similar talk for your team, institution, or community, feel free to [reach out](mailto:mina.mas@hotmail.com).*
