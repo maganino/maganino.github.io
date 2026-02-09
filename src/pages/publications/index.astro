@@ -112,6 +112,7 @@ const drawings = {
               <div class="space-y-6">
                 {yearPubs.map((pub) => (
                   <article
+                    id={pub.slug}
                     class="pub-card opacity-0 translate-y-10 p-6 rounded-xl transition-all hover:scale-[1.02]"
                     data-type={pub.data.type}
                     style="background-color: var(--surface);"

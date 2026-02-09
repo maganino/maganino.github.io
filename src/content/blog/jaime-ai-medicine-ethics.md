@@ -1,5 +1,5 @@
 ---
-title: "j'AI ME: AI, Medicine & Ethics"
+title: "j' AIME: AI, Medicine & Ethics"
 description: "Vulgarising AI for healthcare professionals, sparking a real dialogue on ethics, and coming home with more questions than answers."
 pubDate: 2026-02-08
 heroImage: "/images/blog/jaime.jpeg"
@@ -7,7 +7,7 @@ tags: ["AI", "ethics", "healthcare", "vulgarisation", "dialogue"]
 draft: false
 ---
 
-## j'AI ME ❤️
+## j' AIME ❤️
 
 I love doing this: vulgarising AI and sharing knowledge with everyone.
 
