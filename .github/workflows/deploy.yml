@@ -16,8 +16,10 @@ jobs:
       # 1️⃣ Checkout repo WITH LFS
       - name: Checkout repository
         uses: actions/checkout@v4
-        # with:
-        #   lfs: true           # <-- important! pulls LFS files
+        with:
+          lfs: true           # <-- important! pulls LFS files
+      - name: Pull LFS files
+        run: git lfs pull
 
       # 2️⃣ Setup Node
       - name: Setup Node
