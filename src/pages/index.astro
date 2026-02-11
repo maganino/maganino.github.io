@@ -530,11 +530,20 @@ const drawings = {
 
             <div class="animate-section opacity-0 translate-y-20 p-6 rounded-xl" style="background-color: var(--bg);">
               <div class="flex flex-wrap justify-between items-start mb-2">
+                <h4 class="text-lg font-bold" style="color: var(--text);">MSc Embedded Systems Design</h4>
+                <span class="text-sm" style="color: var(--muted);">2011 – 2013</span>
+              </div>
+              <p class="font-medium mb-2" style="color: var(--accent-primary);">ALaRI, USI Lugano · ETH Zürich · Politecnico di Milano</p>
+              <p style="color: var(--muted);">Joint European Master, minor in Business Development. Full scholarship. Best Master Thesis Swiss Engineering Award.</p>
+            </div>
+
+            <div class="animate-section opacity-0 translate-y-20 p-6 rounded-xl" style="background-color: var(--bg);">
+              <div class="flex flex-wrap justify-between items-start mb-2">
                 <h4 class="text-lg font-bold" style="color: var(--text);">Industry Engineer</h4>
                 <span class="text-sm" style="color: var(--muted);">2009 – 2011</span>
               </div>
               <p class="font-medium mb-2" style="color: var(--accent-primary);">Valeo Automotive · Dell-EMC</p>
-              <p style="color: var(--muted);">Embedded software for Daimler ECUs, data storage solutions, and software integration worldwide.</p>
+              <p style="color: var(--muted);">Embedded software engineer (Validation and Testing) for Daimler ECUs, Implementation Delivery Engineer for data storage solutions, and software integration worldwide.</p>
             </div>
 
           </div>
@@ -721,6 +730,99 @@ const drawings = {
     </footer>
 
   </main>
+
+  <!-- ============================================
+       CV REQUEST MODAL
+       3 fields: name, email, message
+       Themed background with mushroom drawing
+       ============================================ -->
+  <div id="cv-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+    <!-- Backdrop -->
+    <div id="cv-modal-backdrop" class="absolute inset-0" style="background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);"></div>
+
+    <!-- Modal Content -->
+    <div class="relative z-10 w-full max-w-lg mx-4 rounded-2xl overflow-hidden shadow-2xl cv-modal-content" style="background-color: var(--surface);">
+
+      <!-- Mushroom background (expanded, transparent) -->
+      <img
+        src="/images/drawings/transparent/mushroom.png"
+        alt=""
+        class="absolute -top-8 -right-8 w-64 h-64 object-contain opacity-10 pointer-events-none only-dark"
+        aria-hidden="true"
+      />
+      <img
+        src="/images/drawings/inverted/mushroom.png"
+        alt=""
+        class="absolute -top-8 -right-8 w-64 h-64 object-contain opacity-10 pointer-events-none only-light"
+        aria-hidden="true"
+      />
+
+      <!-- Close button -->
+      <button id="cv-modal-close" class="absolute top-4 right-4 p-2 rounded-full transition-all hover:scale-110 z-20" style="color: var(--muted);" aria-label="Close">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="relative z-10 p-8">
+        <!-- Header -->
+        <div class="mb-6">
+          <h3 class="font-chalk text-3xl font-bold mb-2" style="color: var(--text);">Request my CV</h3>
+          <p class="text-sm" style="color: var(--muted);">I'll send it over as soon as possible.</p>
+        </div>
+
+        <!-- Form Fields -->
+        <form id="cv-form" class="space-y-4">
+          <!-- Name -->
+          <div>
+            <label for="cv-name" class="block text-xs font-medium mb-1.5" style="color: var(--muted);">Your Name</label>
+            <input
+              type="text"
+              id="cv-name"
+              placeholder="Jane Doe"
+              required
+              class="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all focus:ring-2"
+              style="background-color: var(--bg); color: var(--text); border: 1px solid color-mix(in srgb, var(--muted) 30%, transparent); --tw-ring-color: var(--accent-primary);"
+            />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="cv-email" class="block text-xs font-medium mb-1.5" style="color: var(--muted);">Your Email</label>
+            <input
+              type="email"
+              id="cv-email"
+              placeholder="jane@company.com"
+              required
+              class="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all focus:ring-2"
+              style="background-color: var(--bg); color: var(--text); border: 1px solid color-mix(in srgb, var(--muted) 30%, transparent); --tw-ring-color: var(--accent-primary);"
+            />
+          </div>
+
+          <!-- Message -->
+          <div>
+            <label for="cv-message" class="block text-xs font-medium mb-1.5" style="color: var(--muted);">Message <span class="opacity-60">(optional)</span></label>
+            <textarea
+              id="cv-message"
+              rows="3"
+              placeholder="Loved your talk at ECPLF! Would love to see your full CV."
+              class="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all focus:ring-2 resize-none"
+              style="background-color: var(--bg); color: var(--text); border: 1px solid color-mix(in srgb, var(--muted) 30%, transparent); --tw-ring-color: var(--accent-primary);"
+            ></textarea>
+          </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="w-full py-3 rounded-xl font-medium text-sm transition-all hover:scale-[1.02] hover:shadow-lg"
+            style="background-color: var(--accent-secondary); color: white;"
+          >
+            Send Request
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <!-- ============================================
@@ -799,15 +901,53 @@ const drawings = {
   })
 
   // ============================================
-  // REQUEST CV BUTTON (single dialog → mailto)
+  // CV REQUEST MODAL
   // ============================================
   const cvBtn = document.getElementById('request-cv-btn')
+  const cvModal = document.getElementById('cv-modal')
+  const cvModalClose = document.getElementById('cv-modal-close')
+  const cvModalBackdrop = document.getElementById('cv-modal-backdrop')
+  const cvForm = document.getElementById('cv-form') as HTMLFormElement
+
+  function openCvModal() {
+    cvModal?.classList.remove('hidden')
+    cvModal?.classList.add('flex')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function closeCvModal() {
+    cvModal?.classList.add('hidden')
+    cvModal?.classList.remove('flex')
+    document.body.style.overflow = ''
+  }
+
   cvBtn?.addEventListener('click', (e) => {
     e.preventDefault()
-    const input = prompt('Please enter your name, email, and a short message (e.g. "Jane Doe, jane@company.com, Loved your talk at ECPLF!"):')
-    if (!input) return
-    const subject = encodeURIComponent('CV Request')
-    const body = encodeURIComponent(`Hi Mina,\n\n${input}\n\nI would love to receive a copy of your CV.\n\nBest regards`)
+    openCvModal()
+  })
+
+  cvModalClose?.addEventListener('click', closeCvModal)
+  cvModalBackdrop?.addEventListener('click', closeCvModal)
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCvModal()
+  })
+
+  // Form submission → mailto
+  cvForm?.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const name = (document.getElementById('cv-name') as HTMLInputElement).value
+    const email = (document.getElementById('cv-email') as HTMLInputElement).value
+    const message = (document.getElementById('cv-message') as HTMLTextAreaElement).value
+
+    const subject = encodeURIComponent(`CV Request from ${name}`)
+    const bodyParts = [`Hi Mina,`, ``, `My name is ${name} (${email}).`]
+    if (message.trim()) bodyParts.push(``, message.trim())
+    bodyParts.push(``, `I would love to receive a copy of your CV.`, ``, `Best regards,`, name)
+    const body = encodeURIComponent(bodyParts.join('\n'))
+
     window.location.href = `mailto:mina.mas@hotmail.com?subject=${subject}&body=${body}`
+    closeCvModal()
   })
 </script>

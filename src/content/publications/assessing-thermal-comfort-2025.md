@@ -6,5 +6,5 @@ year: 2025
 type: "journal"
 doi: "10.1016/j.biosystemseng.2025.104302"
 tags: ["computer-vision", "animal-welfare", "precision-livestock"]
-featured: true
+featured: false
 ---

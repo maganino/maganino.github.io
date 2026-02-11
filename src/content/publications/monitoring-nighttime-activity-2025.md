@@ -6,5 +6,5 @@ year: 2025
 type: "journal"
 doi: "10.1016/j.applanim.2025.106517"
 tags: ["computer-vision", "animal-welfare", "precision-livestock"]
-featured: true
+featured: false
 ---

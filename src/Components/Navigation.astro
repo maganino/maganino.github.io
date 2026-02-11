@@ -106,34 +106,56 @@ const homePrefix = isHome ? '' : '/'
         </div>
       </div>
 
-      <!-- ============================================
-           MOBILE MENU
-           ============================================ -->
-      <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
-        <div class="flex flex-col gap-4">
-          <a href={`${homePrefix}#about`} class="nav-link-mobile text-sm font-medium" data-section="about" style="color: var(--text);">About</a>
-          <a href={`${homePrefix}#work`} class="nav-link-mobile text-sm font-medium" data-section="work" style="color: var(--text);">Work</a>
-          <a href={`${homePrefix}#blog`} class="nav-link-mobile text-sm font-medium" data-section="blog" style="color: var(--text);">Blog</a>
-          <a href={`${homePrefix}#contact`} class="nav-link-mobile text-sm font-medium" data-section="contact" style="color: var(--text);">Contact</a>
-        </div>
-      </div>
     </div>
   </nav>
+
+  <!-- ============================================
+       MOBILE MENU (positioned below hamburger, right-aligned)
+       ============================================ -->
+  <div id="mobile-menu" class="fixed top-[60px] right-4 z-50 hidden md:hidden">
+    <div class="rounded-xl shadow-2xl py-3 px-2 min-w-[200px] mobile-menu-panel" style="background-color: var(--surface); border: 1px solid color-mix(in srgb, var(--muted) 20%, transparent);">
+      <a href={`${homePrefix}#about`} class="nav-link-mobile block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors hover:opacity-80" data-section="about" style="color: var(--text);">About</a>
+
+      <!-- Work with sub-items -->
+      <div class="mobile-work-group">
+        <a href={`${homePrefix}#work`} class="nav-link-mobile block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors hover:opacity-80" data-section="work" style="color: var(--text);">Work</a>
+        <div class="pl-4">
+          <a href="/projects" class="block px-4 py-2 text-xs font-medium rounded-lg transition-colors hover:opacity-80" style="color: var(--muted);">
+            → Projects
+          </a>
+          <a href="/publications" class="block px-4 py-2 text-xs font-medium rounded-lg transition-colors hover:opacity-80" style="color: var(--muted);">
+            → Publications
+          </a>
+        </div>
+      </div>
+
+      <a href={`${homePrefix}#blog`} class="nav-link-mobile block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors hover:opacity-80" data-section="blog" style="color: var(--text);">Blog</a>
+      <a href={`${homePrefix}#contact`} class="nav-link-mobile block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors hover:opacity-80" data-section="contact" style="color: var(--text);">Contact</a>
+    </div>
+  </div>
 
   <script>
     // Mobile menu toggle
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
 
-    mobileMenuBtn?.addEventListener('click', () => {
+    mobileMenuBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
       mobileMenu?.classList.toggle('hidden');
     });
 
     // Close mobile menu when a link is clicked
     mobileMenu?.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
+        mobileMenu?.classList.add('hidden');
       });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (mobileMenu && !mobileMenu.contains(e.target as Node) && !mobileMenuBtn?.contains(e.target as Node)) {
+        mobileMenu.classList.add('hidden');
+      }
     });
 
     // Navbar background on scroll

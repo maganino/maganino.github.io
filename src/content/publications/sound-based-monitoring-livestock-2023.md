@@ -6,5 +6,5 @@ year: 2023
 type: "book-chapter"
 doi: "10.1007/978-3-030-89123-7_129-1"
 tags: ["precision-livestock", "audio-processing", "animal-welfare"]
-featured: true
+featured: false
 ---

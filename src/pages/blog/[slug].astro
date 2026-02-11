@@ -96,9 +96,15 @@ const readingTime = getReadingTime(post.body)
           Back to Blog
         </a>
         
-        {/* Title */}
+        {/* Title — color "AIME" in j'AI ME blog */}
         <h1 class="font-chalk text-5xl md:text-7xl font-bold mb-6" style="color: var(--text);">
-          {post.data.title}
+          {post.data.title.includes('AIME') ? (
+            <Fragment>
+              {post.data.title.split('AIME')[0]}<span style="color: var(--accent-secondary);">AIME</span>{post.data.title.split('AIME')[1]}
+            </Fragment>
+          ) : (
+            post.data.title
+          )}
         </h1>
         
         {/* Description */}

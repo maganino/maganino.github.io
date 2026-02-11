@@ -211,6 +211,47 @@ body {
 }
 
 /* ============================================
+   MOBILE MENU PANEL
+   ============================================ */
+.mobile-menu-panel {
+  backdrop-filter: blur(16px);
+  animation: mobileMenuIn 0.2s ease-out;
+}
+
+@keyframes mobileMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mobile-work-group a:hover {
+  background-color: var(--bg);
+}
+
+/* ============================================
+   CV REQUEST MODAL
+   ============================================ */
+.cv-modal-content {
+  animation: cvModalIn 0.3s ease-out;
+}
+
+@keyframes cvModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ============================================
    DRAWING DIVIDERS
    Your drawings overlaid at 80% width between sections
    ============================================ */

@@ -6,5 +6,5 @@ year: 2016
 type: "conference"
 doi: ""
 tags: ["music-signal-processing", "audio-processing", "signal-processing"]
-featured: true
+featured: false
 ---
