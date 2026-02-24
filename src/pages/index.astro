@@ -13,6 +13,7 @@
  * Dividers: waves-colorful (floating) between About→Work, Work→Blog, Blog→Contact
  */
 
+import type { ActionError } from 'astro/actions/runtime/shared.js'
 import Layout from '../layouts/Layout.astro'
 import { getCollection } from 'astro:content'
 
@@ -77,6 +78,10 @@ const drawings = {
   whoAmI: {
     light: '/images/drawings/inverted/who-am-i.png',
     dark: '/images/drawings/transparent/who-am-i.png'
+  },
+  Action: {
+    light: '/images/drawings/inverted/Action.png',
+    dark: '/images/drawings/transparent/Action.png'
   },
   wavesColorful: {
     light: '/images/drawings/inverted/waves-colorful.png',
@@ -268,8 +273,8 @@ const drawings = {
 
           <!-- A - Activate -->
           <div class="animate-section opacity-0 translate-y-20 text-center p-6 rounded-2xl transition-all hover:scale-105 hover:-translate-y-2" style="background-color: var(--bg);">
-            <img src={drawings.whoAmI.dark} alt="Activate" class="w-32 h-32 mx-auto mb-4 object-contain only-dark" />
-            <img src={drawings.whoAmI.light} alt="Activate" class="w-32 h-32 mx-auto mb-4 object-contain only-light" />
+            <img src={drawings.Action.dark} alt="Activate" class="w-32 h-32 mx-auto mb-4 object-contain only-dark" />
+            <img src={drawings.Action.light} alt="Activate" class="w-32 h-32 mx-auto mb-4 object-contain only-light" />
             <h3 class="font-chalk text-5xl font-bold mb-2" style="color: var(--accent-primary);">A</h3>
             <p class="text-xl font-medium mb-2" style="color: var(--text);">Activate</p>
             <p class="text-sm" style="color: var(--muted);">From idea to action: implementation, development, and follow-through with the tools shaped across countries, disciplines, and applications</p>
